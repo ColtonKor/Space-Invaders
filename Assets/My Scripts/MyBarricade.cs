@@ -12,12 +12,6 @@ public class MyBarricade : MonoBehaviour
         originalScale = this.transform.localScale;
         sub = this.transform.localScale.x/hitsPerBarricade;
     }
-
-    void Update(){
-        if(Input.GetKeyDown(KeyCode.R)){
-            this.transform.localScale = originalScale;
-        }
-    }
     
     void OnCollisionEnter2D(Collision2D collision){
         Destroy(collision.gameObject);

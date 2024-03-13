@@ -44,13 +44,8 @@ public class MyEnemy : MonoBehaviour
         }
         if(alienCount < 1){
             empty.Invoke();
-            DestroyAliens();
             stepInterval = 1f;
-            this.transform.position = startPoint;
-            SpawnAliens();
-        }
-        if(Input.GetKeyDown(KeyCode.R)){
-            DestroyAliens();
+            startPoint = new Vector3(startPoint.x, startPoint.y - 0.5f, startPoint.z);
             this.transform.position = startPoint;
             SpawnAliens();
         }
@@ -95,11 +90,5 @@ public class MyEnemy : MonoBehaviour
         } else {
             transform.position += new Vector3(currentDirection.x, 0, 0);
         }
-    }
-    void DestroyAliens() {
-        foreach (Transform child in transform) {
-            Destroy(child.gameObject);
-        }
-        alienCount = 0;
     }
 }

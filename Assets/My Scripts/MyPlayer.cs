@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class MyPlayer : MonoBehaviour
@@ -16,20 +17,31 @@ public class MyPlayer : MonoBehaviour
   private int highScore = 0;
   public int lives = 3;
   private int begin;
+  private int bullets = 0;
+  public AudioSource Shoot;
+  public AudioSource Hit;
+  private List<ParticleSystem> Particles = new List<ParticleSystem>();
+  public delegate void GameOver();
+  public static event GameOver AllDead;
 
   void Start(){
     begin = lives;
     MyAliens.OnEnemyDied += EnemyOnOnEnemyDied;
     MyEnemy.empty += EnemyOnEnemyLeft;
+    MyBullet.OnBullet += OnBulletDied;
     Score.text = "Score:\n" + myScore.ToString("D4");
     highScore = LoadHighScore();
     High.text = "Highscore:\n" + highScore.ToString("D4");
+    Particles.AddRange(GetComponentsInChildren<ParticleSystem>());
   }
 
   void OnDestroy(){
     MyAliens.OnEnemyDied -= EnemyOnOnEnemyDied;
   }
 
+  void OnBulletDied(){
+    bullets--;
+  }
 
   void EnemyOnOnEnemyDied(int pointWorth, int rare){
     myScore += pointWorth;
@@ -50,33 +62,30 @@ public class MyPlayer : MonoBehaviour
     transform.position = newPosition;
 
     if (Input.GetKeyDown(KeyCode.Space)){
-      GameObject shot = Instantiate(bullet, shottingOffset.position, Quaternion.identity);
-      // bullet++;
-      Destroy(shot, 3f);
-    }
-
-    if(Input.GetKeyDown(KeyCode.R)){
-      gameObject.transform.position = new Vector3(0f, -3.028f, 0f);
-      myScore = 0;
-      Score.text = "Score:\n" + myScore.ToString("D4");
-      lives = begin;
+      if(bullets == 0){
+        Particles[1].Play();
+        bullets++;
+        GameObject shot = Instantiate(bullet, shottingOffset.position, Quaternion.identity);
+        Destroy(shot, 3f);
+        GetComponent<Animator>().SetTrigger("Shoot");
+      }
     }
   }
 
   void OnCollisionEnter2D(Collision2D collision){
-    lives--;
+    Hit.Play();
+    Particles[1].Stop();
+    Particles[0].Play();
+    GetComponent<Animator>().SetTrigger("WasHit");
     Destroy(collision.gameObject);
-    if(lives == 0){
-      gameObject.transform.position = new Vector3(100f, 100f, 0f);
-    }
   }
 
   void OnTriggerEnter2D(Collider2D col){
-    lives--;
-    Destroy(col.gameObject);
-    if(lives == 0){
-      gameObject.transform.position = new Vector3(100f, 100f, 0f);
-    }    
+    Hit.Play();
+    Particles[1].Stop();
+    Particles[0].Play();
+    GetComponent<Animator>().SetTrigger("WasHit");
+    Destroy(col.gameObject);   
   }
 
   public static void SaveHighScore(int score){
@@ -89,5 +98,13 @@ public class MyPlayer : MonoBehaviour
   
   public static int LoadHighScore(){
     return PlayerPrefs.GetInt("HighScore", 0);
+  }
+
+  void Death(){
+    lives--;
+    if(lives == 0){
+      AllDead.Invoke();
+    }  
+    GetComponent<Animator>().SetTrigger("GoBack");
   }
 }

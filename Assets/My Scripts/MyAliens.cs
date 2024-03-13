@@ -19,23 +19,39 @@ public class MyAliens : MonoBehaviour
     public static event EnemyDied OnRare;
     private bool isShooting = false;
     private static MyAliens currentShootingAlien;
+    private static List<MyAliens> potentialShooters = new List<MyAliens>();
     private int currentPoints;
+    public AudioSource ShootSound;
+    public AudioSource Hit;
+    private List<ParticleSystem> Particles = new List<ParticleSystem>();
+    
 
     void Start(){
-        if (this.CompareTag("Rare") && currentShootingAlien == null){
+        Particles.AddRange(GetComponentsInChildren<ParticleSystem>());
+        potentialShooters.Add(this);
+        if (currentShootingAlien == null){
             currentShootingAlien = this;
-            StartCoroutine(Shoot());
+            StartCoroutine(ManageShooting());
         }
     }
-    // Start is called before the first frame update
+
+    void Update(){
+        if (currentShootingAlien == null){
+            currentShootingAlien = this;
+            StartCoroutine(ManageShooting());
+        }
+    }
+
     void OnTriggerEnter2D(Collider2D col){
         if(col.CompareTag("Mine")){
             GetComponent<Animator>().SetBool("Hit", true);
+            Particles[1].Stop();
+            Particles[0].Play();
             Destroy(col.gameObject);
+            Hit.Play();
             if(this.CompareTag("Rare")){
                 currentPoints = rarePoints;
                 OnEnemyDied.Invoke(currentPoints, rarePoints);
-                OnRare.Invoke(currentPoints, rarePoints);
             } else if (this.CompareTag("Top")){
                 currentPoints = topPoints;
                 OnEnemyDied.Invoke(currentPoints, rarePoints);
@@ -50,28 +66,41 @@ public class MyAliens : MonoBehaviour
     }
 
     void DeathAnimationComplete(){
+        if(this.CompareTag("Rare")){
+            OnRare.Invoke(currentPoints, rarePoints);
+        }
         Destroy(gameObject);
         OnDeath.Invoke(currentPoints, rarePoints);
     }
 
+    IEnumerator ManageShooting(){
+        while (potentialShooters.Count > 0){
+            if (currentShootingAlien == null || !currentShootingAlien.isShooting){
+                int shooterIndex = Random.Range(0, potentialShooters.Count);
+                currentShootingAlien = potentialShooters[shooterIndex];
+                StartCoroutine(currentShootingAlien.Shoot());
+            }
+            yield return new WaitForSeconds(shootingInterval);
+        }
+    }
+
     IEnumerator Shoot(){
         isShooting = true;
-        while (isShooting){
-            if (currentShootingAlien == this){
-                ShootBullet();
-                yield return new WaitForSeconds(shootingInterval);
-            } else {
-                yield return new WaitForSeconds(0.1f);
-            }
-        }
+        ShootBullet();
+        yield return new WaitForSeconds(shootingInterval);
+        isShooting = false;
     }
 
     void ShootBullet(){
         Vector3 shootingPosition = transform.position + bulletOffset;
-        Instantiate(bullet, shootingPosition, Quaternion.identity);
+        GameObject shot = Instantiate(bullet, shootingPosition, Quaternion.identity);
+        Destroy(shot, 3f);
+        ShootSound.Play();
+        Particles[1].Play();
     }
 
     void OnDestroy(){
         isShooting = false;
+        potentialShooters.Remove(this);
     }
 }

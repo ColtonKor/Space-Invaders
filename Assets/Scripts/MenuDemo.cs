@@ -6,7 +6,7 @@ using TMPro;
 
 public class MenuDemo : MonoBehaviour
 {
-    public TMPro.TextMeshProUGUI titleText;
+    // public TMPro.TextMeshProUGUI titleText;
     void Awake(){
         DontDestroyOnLoad(gameObject);
     }
@@ -20,7 +20,8 @@ public class MenuDemo : MonoBehaviour
     }
 
     public void StartCredits(){
-        AsyncOperation asyncOp = SceneManager.LoadSceneAsync("Credits");
+        SceneManager.LoadScene("Credits");
+        // StartCoroutine(FindCredits());
     }
 
     IEnumerator FindPlayer(){
@@ -31,4 +32,15 @@ public class MenuDemo : MonoBehaviour
         GameObject playerObj = GameObject.Find("Player");
         Debug.Log(playerObj);
     }
+
+
+    // IEnumerator FindCredits(){
+    //     AsyncOperation asyncOp = SceneManager.LoadSceneAsync("Credits");
+    //     while(!asyncOp.isDone){
+    //         yield return null;
+    //     }
+    //     GameObject playerObj = GameObject.Find("Back");
+    //     Debug.Log(playerObj);
+    // }
+
 }

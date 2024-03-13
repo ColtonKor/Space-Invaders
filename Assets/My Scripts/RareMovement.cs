@@ -14,10 +14,8 @@ public class RareMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        MyAliens.OnRare += EnemyOnOnEnemyDied;
-        Instantiate(rarePrefab, this.transform.position, Quaternion.identity, this.transform);
+        MyAliens.OnRare += EnemyOnRare;
         starter = this.transform.position;
-        onScreen++;
     }
 
     // Update is called once per frame
@@ -42,7 +40,7 @@ public class RareMovement : MonoBehaviour
         }
     }
 
-    void EnemyOnOnEnemyDied(int pointWorth, int rare){
+    void EnemyOnRare(int pointWorth, int rare){
         onScreen--;
         this.transform.position = starter;
     }
