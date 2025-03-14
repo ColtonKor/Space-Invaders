@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1222173625760460331}
   - component: {fileID: 1760554893616483093}
   m_Layer: 0
-  m_Name: Enemy Bottom
+  m_Name: Stalker
   m_TagString: Bottom
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -188,7 +188,7 @@ AudioSource:
   m_GameObject: {fileID: 3181693267799658367}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -7581412707115834060, guid: 186a9acbaf73de94698abb67c6b2a4e0, type: 2}
   m_audioClip: {fileID: 8300000, guid: 3061c7b9b32d894478e4126ccce25ca3, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -284,7 +284,7 @@ AudioSource:
   m_GameObject: {fileID: 3181693267799658367}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -7581412707115834060, guid: 186a9acbaf73de94698abb67c6b2a4e0, type: 2}
   m_audioClip: {fileID: 8300000, guid: ac6034ade498bb94b87620cdf6eac48b, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -5424,8 +5424,8 @@ ParticleSystem:
     startColor:
       serializedVersion: 2
       minMaxState: 2
-      minColor: {r: 0.3479886, g: 0.6415094, b: 0.42871568, a: 1}
-      maxColor: {r: 0.013349946, g: 0.5660378, b: 0.14968304, a: 1}
+      minColor: {r: 1, g: 0.687739, b: 0, a: 1}
+      maxColor: {r: 1, g: 0.10638298, b: 0, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}

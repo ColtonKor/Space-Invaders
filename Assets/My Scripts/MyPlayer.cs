@@ -21,6 +21,7 @@ public class MyPlayer : MonoBehaviour
   public AudioSource Shoot;
   public AudioSource Hit;
   private List<ParticleSystem> Particles = new List<ParticleSystem>();
+  private bool damaged;
   public delegate void GameOver();
   public static event GameOver AllDead;
 
@@ -56,6 +57,10 @@ public class MyPlayer : MonoBehaviour
 
     // Update is called once per frame
   void Update(){
+    if (damaged)
+    {
+      return;
+    }
     float direction = Input.GetAxis("Horizontal");
     Vector3 newPosition = transform.position + new Vector3(direction, 0, 0) * speed * Time.deltaTime;
     newPosition.x = Mathf.Clamp(newPosition.x, minTravelHeight, maxTravelHeight);
@@ -73,6 +78,7 @@ public class MyPlayer : MonoBehaviour
   }
 
   void OnCollisionEnter2D(Collision2D collision){
+    damaged = true;
     Hit.Play();
     Particles[1].Stop();
     Particles[0].Play();
@@ -81,6 +87,7 @@ public class MyPlayer : MonoBehaviour
   }
 
   void OnTriggerEnter2D(Collider2D col){
+    damaged = true;
     Hit.Play();
     Particles[1].Stop();
     Particles[0].Play();
@@ -103,8 +110,9 @@ public class MyPlayer : MonoBehaviour
   void Death(){
     lives--;
     if(lives == 0){
-      AllDead.Invoke();
+      AllDead?.Invoke();
     }  
+    damaged = false;
     GetComponent<Animator>().SetTrigger("GoBack");
   }
 }

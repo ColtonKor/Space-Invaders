@@ -1,40 +1,67 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    void Start(){
-        MyPlayer.AllDead += SendToCredits;
-    }
-    void Awake(){
+    // Singleton instance
+    public static GameManager Instance { get; private set; }
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Ensures it persists across scenes
+        }
+        else
+        {
+            Destroy(gameObject); // Destroy any duplicate instance
+            return;
+        }
+
         Scene scene = SceneManager.GetActiveScene();
-        if(scene.name == "MainMenu"){
+        if (scene.name == "MainMenu")
+        {
             DontDestroyOnLoad(gameObject);
         }
     }
 
-    public void StartGame(){
+    void Start()
+    {
+        MyPlayer.AllDead += SendToCredits;
+    }
+
+    void OnDestroy()
+    {
+        MyPlayer.AllDead -= SendToCredits;
+    }
+
+    public void StartGame()
+    {
         StartCoroutine(FindPlayer());
     }
 
-    public void StartCredits(){
+    public void StartCredits()
+    {
         SceneManager.LoadScene("Credits");
     }
 
-    public void CreditReturn(){
+    public void CreditReturn()
+    {
         SceneManager.LoadSceneAsync("MainMenu");
     }
 
-    public void SendToCredits(){
+    public void SendToCredits()
+    {
         SceneManager.LoadSceneAsync("Credits");
     }
 
-    IEnumerator FindPlayer(){
+    IEnumerator FindPlayer()
+    {
         AsyncOperation asyncOp = SceneManager.LoadSceneAsync("SampleScene");
-        while(!asyncOp.isDone){
+        while (!asyncOp.isDone)
+        {
             yield return null;
         }
         GameObject playerObj = GameObject.Find("Player");

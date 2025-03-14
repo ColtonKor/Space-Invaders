@@ -19,7 +19,7 @@ public class MyBullet : MonoBehaviour
 
   // Update is called once per frame
   private void Fire(){
-    myRigidbody2D.velocity = Vector2.up * speed; 
+    myRigidbody2D.linearVelocity = Vector2.up * speed; 
   }
 
   void OnCollisionEnter2D(Collision2D collision){
